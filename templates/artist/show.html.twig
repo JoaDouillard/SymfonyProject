@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ artist.name }} - Concert Connect{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_artist_index') }}">Artistes</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ artist.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-4">
+                {% if artist.imageFilename %}
+                    <img src="{{ asset('uploads/artists/' ~ artist.imageFilename) }}" class="img-fluid rounded" alt="{{ artist.name }}">
+                {% else %}
+                    <div class="bg-light text-center py-5 rounded">
+                        <i class="fas fa-music fa-5x text-muted"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <h1>{{ artist.name }}</h1>
+                <div class="my-3">
+                    {{ artist.description|nl2br }}
+                </div>
+            </div>
+        </div>
+
+        <h2 class="mt-5 mb-3">Événements à venir</h2>
+        <div class="list-group">
+            {% for event in artist.events %}
+                <a href="{{ path('app_event_show', {'id': event.id}) }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ event.name }}</h5>
+                        <small>{{ event.date|date('d/m/Y H:i') }}</small>
+                    </div>
+                    <p class="mb-1">{{ event.location }}</p>
+                </a>
+            {% else %}
+                <p>Aucun événement programmé pour cet artiste.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

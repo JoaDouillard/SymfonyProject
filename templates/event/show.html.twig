@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.name }} - Concert Connect{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_event_index') }}">Événements</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ event.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h1>{{ event.name }}</h1>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p>{{ event.description|nl2br }}</p>
+
+                        <h4 class="mt-4">Détails de l'événement</h4>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Date:</strong> {{ event.date|date('d/m/Y H:i') }}</li>
+                            <li class="list-group-item"><strong>Lieu:</strong> {{ event.location }}</li>
+                            <li class="list-group-item">
+                                <strong>Artiste:</strong>
+                                <a href="{{ path('app_artist_show', {'id': event.artist.id}) }}">
+                                    {{ event.artist.name }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Participation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Vous souhaitez participer à cet événement ?</p>
+                                    {# Le bouton de participation sera implémenté plus tard #}
+                                    <button class="btn btn-success btn-block">Participer</button>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Connectez-vous pour participer à cet événement.</p>
+                                    <a href="{{ path('app_login') }}" class="btn btn-primary btn-block">Se connecter</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

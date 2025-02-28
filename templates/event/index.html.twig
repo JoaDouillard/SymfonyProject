@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Événements - Concert Connect{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Tous les événements</h1>
+
+        <div class="list-group">
+            {% for event in events %}
+                <a href="{{ path('app_event_show', {'id': event.id}) }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ event.name }}</h5>
+                        <small>{{ event.date|date('d/m/Y H:i') }}</small>
+                    </div>
+                    <p class="mb-1">{{ event.location }}</p>
+                    <small>Artiste: <strong>{{ event.artist.name }}</strong></small>
+                </a>
+            {% else %}
+                <p>Aucun événement trouvé.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

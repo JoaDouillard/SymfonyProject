@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Concert Connect{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Bienvenue sur Concert Connect</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Prochains événements</h2>
+                {% if upcoming_events is empty %}
+                    <p>Aucun événement à venir.</p>
+                {% else %}
+                    <div class="list-group">
+                        {% for event in upcoming_events %}
+                            <a href="{{ path('app_event_show', {'id': event.id}) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ event.name }}</h5>
+                                    <small>{{ event.date|date('d/m/Y H:i') }}</small>
+                                </div>
+                                <p class="mb-1">{{ event.location }}</p>
+                                <small>Par {{ event.artist.name }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Rejoignez-nous</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Inscrivez-vous pour réserver vos places et suivre vos artistes préférés.</p>
+                        <a href="{{ path('app_register') }}" class="btn btn-primary">S'inscrire</a>
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-secondary">Se connecter</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
