@@ -34,31 +34,7 @@
                         </ul>
                     </div>
                     <div class="col-md-4">
-                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <div class="card">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">Participation</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p>Vous souhaitez participer à cet événement ?</p>
-                                    {# Le bouton de participation sera implémenté plus tard #}
-                                    <button class="btn btn-success btn-block">Participer</button>
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="card">
-                                <div class="card-header bg-info text-white">
-                                    <h5 class="mb-0">Information</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p>Connectez-vous pour participer à cet événement.</p>
-                                    <a href="{{ path('app_login') }}" class="btn btn-primary btn-block">Se connecter</a>
-                                </div>
-                            </div>
-                        {% endif %}
-
-
-                        {# Ajouter dans la section où se trouve le bouton de participation #}
+                        {# Section de participation - version unique et correcte #}
                         {% if is_granted('ROLE_USER') %}
                             <div class="card">
                                 <div class="card-header bg-primary text-white">
@@ -88,7 +64,6 @@
                                 </div>
                             </div>
                         {% endif %}
-
                     </div>
                 </div>
             </div>
