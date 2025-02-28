@@ -56,6 +56,39 @@
                                 </div>
                             </div>
                         {% endif %}
+
+
+                        {# Ajouter dans la section où se trouve le bouton de participation #}
+                        {% if is_granted('ROLE_USER') %}
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Participation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Vous souhaitez participer à cet événement ?</p>
+
+                                    <form method="post" action="{{ path('app_event_participate', {'id': event.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('participate' ~ event.id) }}">
+                                        {% if app.user in event.participants %}
+                                            <button class="btn btn-danger btn-block">Ne plus participer</button>
+                                        {% else %}
+                                            <button class="btn btn-success btn-block">Participer</button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Connectez-vous pour participer à cet événement.</p>
+                                    <a href="{{ path('app_login') }}" class="btn btn-primary btn-block">Se connecter</a>
+                                </div>
+                            </div>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>
