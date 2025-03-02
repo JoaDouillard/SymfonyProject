@@ -42,6 +42,7 @@ final class Version20250228153001 extends AbstractMigration
         $this->addSql('DROP TABLE event');
         $this->addSql('DROP TABLE event_user');
         $this->addSql('DROP TABLE user');
+        $this->addSql('ALTER TABLE user ADD COLUMN is_verified TINYINT(1) NOT NULL DEFAULT 0;');
         $this->addSql('DROP TABLE messenger_messages');
     }
 }
