@@ -26,7 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column]
+    #[ORM\Column(type: "json")]
     private array $roles = [];
 
     /**
@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'Event')]
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
     private Collection $participatedEvents;
 
     #[ORM\Column]
@@ -173,7 +173,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->participatedEvents->contains($participatedEvent)) {
             $this->participatedEvents->add($participatedEvent);
-            $participatedEvent->addEvent($this);
+            $participatedEvent->addParticipant($this);
         }
 
         return $this;
@@ -182,7 +182,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeParticipatedEvent(Event $participatedEvent): static
     {
         if ($this->participatedEvents->removeElement($participatedEvent)) {
-            $participatedEvent->removeEvent($this);
+            $participatedEvent->removeParticipant($this);
         }
 
         return $this;
