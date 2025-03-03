@@ -42,8 +42,8 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'participatedEvents')]
     private Collection $participants;
 
-    #[ORM\Column(length: 255)]
-    private ?string $no = null;
+//    #[ORM\Column(length: 255)]
+//    private ?string $no = null;
 
     public function __construct()
     {
