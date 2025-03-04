@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration des Utilisateurs - Concert Connect{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Administration des Utilisateurs</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">Liste des Utilisateurs</h1>
+            </div>
+            <div class="card-body">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Rôles</th>
+                            <th>Date d'inscription</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    {% for role in user.roles %}
+                                        {% if role == 'ROLE_ADMIN' %}
+                                            <span class="badge bg-danger">Administrateur</span>
+                                        {% elseif role == 'ROLE_USER' %}
+                                            <span class="badge bg-info">Utilisateur</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ role }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{% if user.createdAt is defined %}{{ user.createdAt|date('d/m/Y') }}{% else %}Non disponible{% endif %}</td>
+                                <td>
+                                    {% if app.user != user %}
+                                        <form method="post" action="{{ path('app_admin_users_delete', {'id': user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?');" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <span class="text-muted">(Votre compte)</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
