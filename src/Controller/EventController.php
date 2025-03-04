@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\UserRepository;
 
 
 #[Route('/events')]
@@ -154,6 +155,48 @@ class EventController extends AbstractController
         }
 
         return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
+    }
+
+
+    #[Route('/{id}/participants', name: 'app_event_participants', methods: ['GET'])]
+    public function participants(Event $event): Response
+    {
+        // Vérifier que l'utilisateur a le droit d'accéder à cette page
+        if (!$this->isGranted('ROLE_ADMIN') && $event->getCreator() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à gérer les participants');
+        }
+
+        return $this->render('event/participants.html.twig', [
+            'event' => $event,
+        ]);
+    }
+
+
+
+    #[Route('/{id}/remove-participant/{userId}', name: 'app_event_remove_participant', methods: ['POST'])]
+    public function removeParticipant(Request $request, Event $event, int $userId, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    {
+        // Vérifier que l'utilisateur a le droit d'effectuer cette action
+        if (!$this->isGranted('ROLE_ADMIN') && $event->getCreator() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à retirer des participants');
+        }
+
+        if ($this->isCsrfTokenValid('remove_participant'.$event->getId().$userId, $request->request->get('_token'))) {
+            $participant = $userRepository->find($userId);
+
+            if ($participant) {
+                // Ne pas retirer le créateur de l'événement
+                if ($participant !== $event->getCreator()) {
+                    $event->removeParticipant($participant);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Le participant a été retiré avec succès.');
+                } else {
+                    $this->addFlash('error', 'Le créateur de l\'événement ne peut pas être retiré.');
+                }
+            }
+        }
+
+        return $this->redirectToRoute('app_event_participants', ['id' => $event->getId()]);
     }
 
 }
