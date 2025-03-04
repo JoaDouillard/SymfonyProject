@@ -28,16 +28,22 @@ class EventController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $event = new Event();
-        $event->setCreator($this->getUser());
+        $user = $this->getUser();
+
+        // Définir l'utilisateur courant comme créateur
+        $event->setCreator($user);
 
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Ajouter le créateur comme participant
+            $event->addParticipant($user);
+
             $entityManager->persist($event);
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'événement a été créé avec succès');
+            $this->addFlash('success', 'L\'événement a été créé avec succès. Vous y participez automatiquement.');
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
@@ -46,6 +52,7 @@ class EventController extends AbstractController
             'form' => $form,
         ]);
     }
+
 
     #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
     public function show(Event $event): Response
@@ -117,4 +124,23 @@ class EventController extends AbstractController
 
         return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
     }
+
+    #[Route('/mes-evenements', name: 'app_my_events', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function myEvents(EventRepository $eventRepository): Response
+    {
+        $user = $this->getUser();
+
+        // Récupérer les événements où l'utilisateur est participant
+        $participatingEvents = $eventRepository->findParticipatingEvents($user);
+
+        // Récupérer les événements créés par l'utilisateur
+        $createdEvents = $eventRepository->findBy(['creator' => $user]);
+
+        return $this->render('event/my_events.html.twig', [
+            'participating_events' => $participatingEvents,
+            'created_events' => $createdEvents,
+        ]);
+    }
+
 }

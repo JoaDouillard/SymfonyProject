@@ -28,4 +28,19 @@ class EventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Trouve tous les événements auxquels un utilisateur participe
+     */
+    public function findParticipatingEvents(User $user): array
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.participants', 'p')
+            ->andWhere('p = :user')
+            ->setParameter('user', $user)
+            ->orderBy('e.date', 'ASC') // Tri par date croissante
+            ->getQuery()
+            ->getResult();
+    }
+
 }
