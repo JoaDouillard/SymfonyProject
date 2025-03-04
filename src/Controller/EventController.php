@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+
 #[Route('/events')]
 class EventController extends AbstractController
 {
@@ -53,16 +54,32 @@ class EventController extends AbstractController
         ]);
     }
 
+    #[Route('/mes-evenements', name: 'app_my_events', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function myEvents(EventRepository $eventRepository): Response
+    {
+        $user = $this->getUser();
 
-    #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
+        // Récupérer les événements où l'utilisateur est participant
+        $participatingEvents = $eventRepository->findParticipatingEvents($user);
+
+        // Récupérer les événements créés par l'utilisateur
+        $createdEvents = $eventRepository->findBy(['creator' => $user]);
+
+        return $this->render('event/my_events.html.twig', [
+            'participating_events' => $participatingEvents,
+            'created_events' => $createdEvents,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_event_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(Event $event): Response
     {
         return $this->render('event/show.html.twig', [
             'event' => $event,
         ]);
     }
-
-    #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
         // Seul le créateur de l'événement ou un admin peut éditer
@@ -86,7 +103,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_event_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
         // Seul le créateur de l'événement ou un admin peut supprimer
@@ -104,7 +121,7 @@ class EventController extends AbstractController
         return $this->redirectToRoute('app_event_index');
     }
 
-    #[Route('/{id}/participate', name: 'app_event_participate', methods: ['POST'])]
+    #[Route('/{id}/participate', name: 'app_event_participate', methods: ['POST'], requirements: ['id' => '\d+'])]
     #[IsGranted('ROLE_USER')]
     public function participate(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
@@ -123,24 +140,6 @@ class EventController extends AbstractController
         }
 
         return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
-    }
-
-    #[Route('/mes-evenements', name: 'app_my_events', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
-    public function myEvents(EventRepository $eventRepository): Response
-    {
-        $user = $this->getUser();
-
-        // Récupérer les événements où l'utilisateur est participant
-        $participatingEvents = $eventRepository->findParticipatingEvents($user);
-
-        // Récupérer les événements créés par l'utilisateur
-        $createdEvents = $eventRepository->findBy(['creator' => $user]);
-
-        return $this->render('event/my_events.html.twig', [
-            'participating_events' => $participatingEvents,
-            'created_events' => $createdEvents,
-        ]);
     }
 
 }
