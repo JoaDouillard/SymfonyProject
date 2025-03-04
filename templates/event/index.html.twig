@@ -21,4 +21,29 @@
             {% endfor %}
         </div>
     </div>
+    <form method="get" action="{{ path('app_event_index') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="start_date">Date de début</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ start_date }}">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="end_date">Date de fin</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control" value="{{ end_date }}">
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Filtrer</button>
+                    {% if start_date or end_date %}
+                        <a href="{{ path('app_event_index') }}" class="btn btn-secondary">Réinitialiser</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
+
 {% endblock %}

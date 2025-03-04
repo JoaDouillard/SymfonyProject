@@ -17,12 +17,26 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EventController extends AbstractController
 {
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository): Response
+    public function index(Request $request, EventRepository $eventRepository): Response
     {
+        $startDate = $request->query->get('start_date');
+        $endDate = $request->query->get('end_date');
+
+        if ($startDate || $endDate) {
+            $startDate = $startDate ? new \DateTime($startDate) : null;
+            $endDate = $endDate ? new \DateTime($endDate) : null;
+            $events = $eventRepository->findByDateRange($startDate, $endDate);
+        } else {
+            $events = $eventRepository->findAll();
+        }
+
         return $this->render('event/index.html.twig', [
-            'events' => $eventRepository->findAll(),
+            'events' => $events,
+            'start_date' => $startDate ? $startDate->format('Y-m-d') : '',
+            'end_date' => $endDate ? $endDate->format('Y-m-d') : '',
         ]);
     }
+
 
     #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]

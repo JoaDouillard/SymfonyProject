@@ -16,6 +16,16 @@ class ArtistRepository extends ServiceEntityRepository
         parent::__construct($registry, Artist::class);
     }
 
+    public function findByNameLike(string $name): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('LOWER(a.name) LIKE LOWER(:name)')
+            ->setParameter('name', '%' . $name . '%')
+            ->orderBy('a.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Artist[] Returns an array of Artist objects
     //     */
