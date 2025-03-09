@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-md-4">
                 {% if artist.imageFilename %}
-                    <img src="{{ asset('uploads/artists/' ~ artist.imageFilename) }}" class="img-fluid rounded" alt="{{ artist.name }}">
+                    <img src="{{ asset('/uploads/images/' ~ artist.imageFilename) }}" class="img-fluid rounded" alt="{{ artist.name }}">
                 {% else %}
                     <div class="bg-light text-center py-5 rounded">
                         <i class="fas fa-music fa-5x text-muted"></i>

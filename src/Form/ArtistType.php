@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Artist;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,8 +34,14 @@ class ArtistType extends AbstractType
                 ],
                 'label' => 'Description',
                 'attr' => ['rows' => 5],
-            ]);
-        // L'ajout de l'image sera implémenté plus tard avec VichUploaderBundle
+            ])
+            // L'ajout de l'image sera implémenté plus tard avec VichUploaderBundle
+            ->add('image', FileType::class, [
+            'label' => 'Image de l\'artiste (JPG ou PNG)',
+            'mapped' => false,
+            'required' => false,
+
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

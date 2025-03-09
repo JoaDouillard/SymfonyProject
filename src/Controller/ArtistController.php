@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
 
 #[Route('/artists')]
 class ArtistController extends AbstractController
@@ -32,6 +34,26 @@ class ArtistController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Récupérer le fichier d'image uploadé
+            $imageFile = $form->get('image')->getData();
+
+            if ($imageFile) {
+                // Générer un nom unique pour le fichier
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+
+                // Déplacer le fichier dans le dossier spécifié
+                try {
+                    $imageFile->move(
+                        $this->getParameter('artist_images_directory'),  // Chemin défini dans services.yaml
+                        $newFilename
+                    );
+                    // Enregistrer le nom du fichier dans l'entité Artist
+                    $artist->setImageFilename($newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('danger', 'Erreur lors du téléchargement de l\'image.');
+                }
+            }
+
             $entityManager->persist($artist);
             $entityManager->flush();
 
@@ -61,6 +83,21 @@ class ArtistController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $imageFile = $form->get('image')->getData();
+
+            if ($imageFile) {
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+                try {
+                    $imageFile->move(
+                        $this->getParameter('artist_images_directory'),
+                        $newFilename
+                    );
+                    $artist->setImageFilename($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Erreur lors du téléchargement de l\'image.');
+                }
+            }
             $entityManager->flush();
 
             $this->addFlash('success', 'L\'artiste a été modifié avec succès');
@@ -85,4 +122,5 @@ class ArtistController extends AbstractController
 
         return $this->redirectToRoute('app_artist_index');
     }
+
 }
