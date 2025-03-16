@@ -1,7 +1,10 @@
 api_platform:
     title: 'Event Manager API'
     description: 'API pour la gestion des artistes et événements'
-    version: '1.0.0'
+    version: '4.1.1'
+    resource: .
+    type: api_platform
+    prefix: /api
 
     # Activer les formats de retour
     formats:
@@ -14,10 +17,12 @@ api_platform:
 
     # Configuration Swagger UI
     swagger:
+        versions: [3]
         api_keys:
             apiKey:
                 name: 'Authorization'
                 type: 'header'
+
 
     # Configuration des collections
     collection:
