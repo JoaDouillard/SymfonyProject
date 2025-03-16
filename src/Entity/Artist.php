@@ -7,28 +7,46 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ArtistRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['artist:read', 'artist:item:read']]),
+        new GetCollection(normalizationContext: ['groups' => ['artist:read']])
+    ],
+    order: ['name' => 'ASC'],
+    paginationEnabled: true,
+    paginationItemsPerPage: 10
+)]
 class Artist
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['artist:read', 'event:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['artist:read', 'event:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['artist:read', 'artist:item:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Groups(['artist:read'])]
     private ?string $imageFilename = null;
 
     /**
      * @var Collection<int, Event>
      */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'artist')]
+    #[Groups(['artist:item:read'])]
     private Collection $events;
 
     public function __construct()

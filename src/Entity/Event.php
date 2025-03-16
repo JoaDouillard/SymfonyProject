@@ -7,43 +7,61 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['event:read', 'event:item:read']]),
+        new GetCollection(normalizationContext: ['groups' => ['event:read']])
+    ],
+    order: ['date' => 'DESC'],
+    paginationEnabled: true,
+    paginationItemsPerPage: 10
+)]
 class Event
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['event:read', 'artist:item:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['event:read', 'artist:item:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['event:read', 'event:item:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['event:read', 'artist:item:read'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['event:read', 'event:item:read'])]
     private ?string $location = null;
 
     #[ORM\ManyToOne(targetEntity: Artist::class, inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['event:read'])]
     private ?Artist $artist = null;
 
     #[ORM\ManyToOne(inversedBy: 'createdEvents')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['event:item:read'])]
     private ?User $creator = null;
 
     /**
      * @var Collection<int, User>
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'participatedEvents')]
+    #[Groups(['event:item:read'])]
     private Collection $participants;
-
-//    #[ORM\Column(length: 255)]
-//    private ?string $no = null;
 
     public function __construct()
     {
@@ -151,15 +169,4 @@ class Event
         return $this;
     }
 
-    public function getNo(): ?string
-    {
-        return $this->no;
-    }
-
-    public function setNo(string $no): static
-    {
-        $this->no = $no;
-
-        return $this;
-    }
 }

@@ -1,0 +1,28 @@
+api_platform:
+    title: 'Event Manager API'
+    description: 'API pour la gestion des artistes et événements'
+    version: '1.0.0'
+
+    # Activer les formats de retour
+    formats:
+        jsonld:
+            mime_types: ['application/ld+json']
+        json:
+            mime_types: ['application/json']
+        html:
+            mime_types: ['text/html']
+
+    # Configuration Swagger UI
+    swagger:
+        api_keys:
+            apiKey:
+                name: 'Authorization'
+                type: 'header'
+
+    # Configuration des collections
+    collection:
+        pagination:
+            enabled: true
+            page_parameter_name: 'page'
+            items_per_page_parameter_name: 'itemsPerPage'
+            partial_parameter_name: 'partial'
