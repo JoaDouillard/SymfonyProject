@@ -67,15 +67,16 @@
 
                                     {% if otherParticipants|length > 0 %}
                                         <h5>Autres participants</h5>
-                                            <div class="row">
-                                                {% for participant in otherParticipants %}
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="d-flex align-items-center">
-                                                            <span>{{ participant.email }}</span>
-                                                        </div>
+
+                                        <div class="row">
+                                            {% for participant in otherParticipants %}
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <span>{{ participant.email }}</span>
                                                     </div>
-                                                {% endfor %}
-                                            </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
                                     {% endif %}
                                 {% else %}
                                     <p class="text-muted">Aucun participant pour le moment.</p>

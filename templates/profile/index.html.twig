@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted mb-1">{{ user.email }}</h5>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="list-group">
+                            <a href="{{ path('app_profile_change_password') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-key mr-2"></i> Changer mon mot de passe
+                            </a>
+                            <a href="{{ path('app_my_events') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-calendar-alt mr-2"></i> Mes événements
+                            </a>
+                            <a href="{{ path('app_profile_delete') }}" class="list-group-item list-group-item-action text-danger">
+                                <i class="fas fa-user-times mr-2"></i> Supprimer mon compte
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="mb-0">Informations personnelles</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0 font-weight-bold">Email</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0 font-weight-bold">Rôle</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        Administrateur
+                                    {% else %}
+                                        Utilisateur
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

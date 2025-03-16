@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Artist;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,8 +35,27 @@ class ArtistType extends AbstractType
                 ],
                 'label' => 'Description',
                 'attr' => ['rows' => 5],
-            ]);
-        // L'ajout de l'image sera implémenté plus tard avec VichUploaderBundle
+            ])
+            // L'ajout de l'image sera implémenté plus tard avec VichUploaderBundle
+            ->add('image', FileType::class, [
+                'label' => 'Photo de l\'artiste',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([  // Utilisez la classe complètement qualifiée si nécessaire: new \Symfony\Component\Validator\Constraints\File
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPG, PNG, GIF ou WEBP)',
+                    ])
+                ],
+            ])
+
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

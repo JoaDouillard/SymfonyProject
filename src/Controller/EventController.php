@@ -15,6 +15,7 @@ use App\Repository\UserRepository;
 
 
 #[Route('/events')]
+#[IsGranted('ROLE_USER')]
 class EventController extends AbstractController
 {
     #[Route('/', name: 'app_event_index', methods: ['GET'])]

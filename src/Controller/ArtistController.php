@@ -5,16 +5,25 @@ namespace App\Controller;
 use App\Entity\Artist;
 use App\Form\ArtistType;
 use App\Repository\ArtistRepository;
+use App\Service\ImageUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/artists')]
 class ArtistController extends AbstractController
 {
+    private $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
+
     #[Route('/', name: 'app_artist_index', methods: ['GET'])]
     public function index(Request $request, ArtistRepository $artistRepository): Response
     {
@@ -42,6 +51,21 @@ class ArtistController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Récupérer le fichier d'image uploadé
+            $imageFile = $form->get('image')->getData();
+
+            if ($imageFile) {
+                try {
+                    // Utilisation du service pour uploader et convertir l'image en WEBP
+                    $imageFileName = $this->imageUploadService->upload($imageFile, 'artists');
+
+                    // Enregistrer le nom du fichier dans l'entité Artist
+                    $artist->setImageFilename($imageFileName);
+                } catch (\Exception $e) {
+                    $this->addFlash('danger', 'Erreur lors du téléchargement de l\'image: ' . $e->getMessage());
+                }
+            }
+
             $entityManager->persist($artist);
             $entityManager->flush();
 
@@ -71,6 +95,28 @@ class ArtistController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('image')->getData();
+
+            if ($imageFile) {
+                try {
+                    // Supprimer l'ancienne image si elle existe
+                    if ($artist->getImageFilename()) {
+                        $oldImagePath = $this->getParameter('kernel.project_dir') . '/public/uploads/images/' . $artist->getImageFilename();
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
+
+                    // Utilisation du service pour uploader et convertir l'image en WEBP
+                    $imageFileName = $this->imageUploadService->upload($imageFile, 'artists');
+
+                    // Enregistrer le nom du fichier dans l'entité Artist
+                    $artist->setImageFilename($imageFileName);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Erreur lors du téléchargement de l\'image: ' . $e->getMessage());
+                }
+            }
+
             $entityManager->flush();
 
             $this->addFlash('success', 'L\'artiste a été modifié avec succès');
@@ -88,6 +134,14 @@ class ArtistController extends AbstractController
     public function delete(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$artist->getId(), $request->request->get('_token'))) {
+            // Supprimer l'image associée à l'artiste, si elle existe
+            if ($artist->getImageFilename()) {
+                $imagePath = $this->getParameter('kernel.project_dir') . '/public/uploads/images/' . $artist->getImageFilename();
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
             $entityManager->remove($artist);
             $entityManager->flush();
             $this->addFlash('success', 'L\'artiste a été supprimé');
@@ -96,3 +150,4 @@ class ArtistController extends AbstractController
         return $this->redirectToRoute('app_artist_index');
     }
 }
+
