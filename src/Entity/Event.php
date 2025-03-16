@@ -28,7 +28,7 @@ class Event
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
-    #[ORM\ManyToOne(inversedBy: 'events')]
+    #[ORM\ManyToOne(targetEntity: Artist::class, inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
 

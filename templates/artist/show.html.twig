@@ -12,9 +12,6 @@
             </ol>
         </nav>
 
-
-
-
         <div class="row">
             <div class="col-md-4">
                 {% if artist.imageFilename %}
@@ -25,7 +22,7 @@
                     </div>
                 {% endif %}
 
-                {# Ajout du bouton de modification pour les admins #}
+
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="mt-4">
                         <a href="{{ path('app_artist_edit', {'id': artist.id}) }}" class="btn btn-primary">
@@ -48,14 +45,6 @@
                 <div class="my-3">
                     {{ artist.description|nl2br }}
                 </div>
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('app_artist_edit', {'id': artist.id}) }}" class="btn btn-primary">Modifier</a>
-
-                <form method="post" action="{{ path('app_artist_delete', {'id': artist.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet artiste ?');" style="display: inline-block;">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ artist.id) }}">
-                    <button class="btn btn-danger">Supprimer</button>
-                </form>
-            {% endif %}
             </div>
         </div>
 

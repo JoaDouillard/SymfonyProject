@@ -134,20 +134,35 @@ class ArtistController extends AbstractController
     public function delete(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$artist->getId(), $request->request->get('_token'))) {
-            // Supprimer l'image associée à l'artiste, si elle existe
-            if ($artist->getImageFilename()) {
-                $imagePath = $this->getParameter('kernel.project_dir') . '/public/uploads/images/' . $artist->getImageFilename();
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
+            try {
+                // Récupérer et supprimer tous les événements liés à cet artiste
+                $events = $artist->getEvents();
+                foreach ($events as $event) {
+                    $entityManager->remove($event);
                 }
-            }
 
-            $entityManager->remove($artist);
-            $entityManager->flush();
-            $this->addFlash('success', 'L\'artiste a été supprimé');
+                // Supprimer l'image de l'artiste si elle existe
+                if ($artist->getImageFilename()) {
+                    $imagePath = $this->getParameter('kernel.project_dir') . '/public/uploads/images/' . $artist->getImageFilename();
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                }
+
+                // Supprimer l'artiste
+                $entityManager->remove($artist);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'L\'artiste a été supprimé avec tous ses événements associés');
+            } catch (\Exception $e) {
+                $this->addFlash('danger', 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
+            }
+        } else {
+            $this->addFlash('danger', 'Token CSRF invalide');
         }
 
         return $this->redirectToRoute('app_artist_index');
     }
+
 }
 
