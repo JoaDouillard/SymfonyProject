@@ -12,13 +12,34 @@
             </ol>
         </nav>
 
+
+
+
         <div class="row">
             <div class="col-md-4">
                 {% if artist.imageFilename %}
-                    <img src="{{ asset('/uploads/images/' ~ artist.imageFilename) }}" class="img-fluid rounded" alt="{{ artist.name }}">
+                    <img src="{{ asset('/uploads/images/' ~ artist.imageFilename) }}" class="img-fluid rounded card-img-top" alt="{{ artist.name }}">
                 {% else %}
                     <div class="bg-light text-center py-5 rounded">
                         <i class="fas fa-music fa-5x text-muted"></i>
+                    </div>
+                {% endif %}
+
+                {# Ajout du bouton de modification pour les admins #}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="mt-4">
+                        <a href="{{ path('app_artist_edit', {'id': artist.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Modifier l'artiste
+                        </a>
+
+                        <form method="post" action="{{ path('app_artist_delete', {'id': artist.id}) }}"
+                              style="display: inline-block;"
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet artiste ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ artist.id) }}">
+                            <button class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
                     </div>
                 {% endif %}
             </div>
