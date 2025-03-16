@@ -5,8 +5,18 @@
 {% block body %}
     <div class="container">
         <h1 class="my-4">Tous les artistes</h1>
-
         <div class="row">
+        <form method="get" action="{{ path('app_artist_index') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Rechercher un artiste..." value="{{ searchTerm }}">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+                {% if searchTerm %}
+                    <a href="{{ path('app_artist_index') }}" class="btn btn-secondary">Réinitialiser</a>
+                {% endif %}
+            </div>
+        </form>
+
+
             {% for artist in artists %}
                 <div class="col-md-4 mb-4">
                     <div class="card">
