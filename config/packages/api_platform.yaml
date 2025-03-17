@@ -1,12 +1,9 @@
 api_platform:
     title: 'Event Manager API'
     description: 'API pour la gestion des artistes et événements'
-    version: '4.1.1'
-    resource: .
-    type: api_platform
-    prefix: /api
+    version: '1.0.0'
 
-    # Activer les formats de retour
+    # Formats de sortie
     formats:
         jsonld:
             mime_types: ['application/ld+json']
@@ -22,7 +19,6 @@ api_platform:
             apiKey:
                 name: 'Authorization'
                 type: 'header'
-
 
     # Configuration des collections
     collection:
