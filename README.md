@@ -6,7 +6,6 @@ Ce projet est une API développée avec Symfony, fournissant une interface backe
 ## Fonctionnalités
 
 - Structure d'API RESTful
-- Système d'authentification sécurisé par clé API
 - Endpoints documentés
 - Base de données relationnelle
 
@@ -16,8 +15,8 @@ Pour installer et exécuter ce projet, vous aurez besoin de :
 
 - PHP 8.1 ou supérieur
 - Composer
-- Serveur MySQL (ou autre base de données compatible avec Doctrine)
-- Symfony CLI (recommandé pour le développement)
+- Serveur SQLite 
+- Symfony CLI
 
 ## Installation
 
@@ -47,20 +46,14 @@ cp .env .env.local
 Éditez le fichier `.env.local` pour configurer votre connexion à la base de données :
 
 ```
-DATABASE_URL="mysql://username:password@127.0.0.1:3306/db_name?serverVersion=8&charset=utf8mb4"
+DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
 ```
 
 ### 4. Créer la base de données
 
 ```bash
-php bin/console doctrine:database:create
-php bin/console doctrine:schema:create
-```
-
-### 5. Charger les fixtures (données de test, si disponibles)
-
-```bash
-php bin/console doctrine:fixtures:load
+php bin/console make:migration
+php bin/console doc:mig:mig
 ```
 
 ## Démarrage du serveur
@@ -77,18 +70,32 @@ Vous pouvez maintenant accéder à l'application à l'adresse : `http://localhos
 
 ```
 └── SymfonyProject/
-    ├── bin/                  # Exécutables (console Symfony)
-    ├── config/               # Configuration de l'application
-    ├── migrations/           # Migrations de base de données
-    ├── public/               # Point d'entrée web, assets publics
-    ├── src/                  # Code source de l'application
-    │   ├── Controller/       # Contrôleurs API
-    │   ├── Entity/           # Entités Doctrine
-    │   ├── Repository/       # Repositories pour accéder aux données
-    │   └── Security/         # Classes liées à la sécurité
-    ├── templates/            # Templates Twig
-    ├── tests/                # Tests automatisés
-    └── var/                  # Fichiers générés (cache, logs)
+    ├── bin/                   # Exécutables Symfony
+    ├── config/                # Configuration de l'application
+    ├── migrations/            # Migrations de base de données
+    ├── public/                # Point d'entrée web, assets publics
+    │   └── uploads/           # Dossier des fichiers uploadés
+    │       └── images/        # Images uploadées
+    ├── src/                   # Code source de l'application
+    │   ├── Command/           # Commandes personnalisées Symfony
+    │   ├── Controller/        # Contrôleurs API
+    │   ├── Entity/            # Entités Doctrine
+    │   ├── Form/              # Formulaires Symfony
+    │   ├── Repository/        # Accès aux données
+    │   ├── Security/          # Gestion de la sécurité
+    │   └── Kernel.php         # Fichier Kernel Symfony
+    ├── templates/             # Templates Twig
+    │   ├── admin/             # Interface administrateur
+    │   ├── api/               # Templates pour l'API
+    │   ├── artist/            # Vue artiste
+    │   ├── event/             # Vue événement
+    │   ├── home/              # Page d'accueil
+    │   ├── registration/      # Inscription
+    │   └── security/          # Sécurité et login
+    ├── tests/                 # Tests automatisés
+    ├── translations/          # Fichiers de traduction
+    ├── var/                   # Fichiers générés (cache, logs)
+    └── vendor/                # Dépendances Composer
 ```
 
 ## API Endpoints
@@ -100,14 +107,6 @@ L'application expose les endpoints suivants :
 - `POST /api/resources` - Créer une nouvelle ressource
 - `PUT /api/resources/{id}` - Mettre à jour une ressource
 - `DELETE /api/resources/{id}` - Supprimer une ressource
-
-## Authentification
-
-L'API utilise une authentification par clé API. Pour accéder aux endpoints protégés, incluez votre clé API dans les en-têtes de requête :
-
-```
-Authorization: ApiKey YOUR_API_KEY
-```
 
 ## Documentation
 
@@ -122,7 +121,7 @@ http://localhost:8000/api/docs
 ### Erreur de connexion à la base de données
 
 Vérifiez que :
-1. Votre serveur MySQL est en cours d'exécution
+1. Votre serveur SQLite est en cours d'exécution
 2. Les identifiants dans `.env.local` sont corrects
 3. La base de données existe (sinon créez-la avec `php bin/console doctrine:database:create`)
 
@@ -175,15 +174,16 @@ extension=mysqli     ; Alternative pour la connexion MySQL
 4. **Vérifier que les extensions sont actives** :
    ```php
    <?php
-   echo "fileinfo: " . (extension_loaded('fileinfo') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "gd: " . (extension_loaded('gd') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "intl: " . (extension_loaded('intl') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "mbstring: " . (extension_loaded('mbstring') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "pdo_mysql: " . (extension_loaded('pdo_mysql') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "openssl: " . (extension_loaded('openssl') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "curl: " . (extension_loaded('curl') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "exif: " . (extension_loaded('exif') ? 'OK' : 'MANQUANT') . "<br>";
-   echo "mysqli: " . (extension_loaded('mysqli') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "curl : " . (extension_loaded('curl') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "exif : " . (extension_loaded('exif') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "fileinfo : " . (extension_loaded('fileinfo') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "gd : " . (extension_loaded('gd') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "intl : " . (extension_loaded('intl') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "mbstring : " . (extension_loaded('mbstring') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "mysqli : " . (extension_loaded('mysqli') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "openssl : " . (extension_loaded('openssl') ? 'OK' : 'MANQUANT') . "<br>";
+    echo "pdo_mysql : " . (extension_loaded('pdo_mysql') ? 'OK' : 'MANQUANT') . "<br>";
+
    ```
 
 ### Limitations de téléchargement
