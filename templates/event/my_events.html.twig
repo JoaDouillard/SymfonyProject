@@ -46,7 +46,7 @@
                                     </td>
                                     <td>{{ event.artist.name }}</td>
                                     <td class="fw-bold text-primary">{{ event.date|date('d/m/Y H:i') }}</td>
-                                    <td class="fw-bold text-primary">{{ event.localisation }}</td>
+                                    <td class="fw-bold text-primary">{{ event.location }}</td>
                                     <td>
                                         <a href="{{ path('app_event_edit', {'id': event.id}) }}" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-edit"></i>
@@ -104,7 +104,7 @@
                                     </td>
                                     <td>{{ event.artist.name }}</td>
                                     <td class="fw-bold text-success">{{ event.date|date('d/m/Y H:i') }}</td>
-                                    <td class="fw-bold text-success">{{ event.localisation }}</td>
+                                    <td class="fw-bold text-success">{{ event.location }}</td>
                                     <td>
                                         {% if event.creator == app.user %}
                                             <span class="badge bg-info">Vous</span>

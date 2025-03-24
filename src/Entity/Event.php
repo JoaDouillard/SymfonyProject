@@ -44,7 +44,7 @@ class Event
 
     #[ORM\Column(length: 255)]
     #[Groups(['event:read', 'event:item:read'])]
-    private ?string $localisation = null;
+    private ?string $location = null;
 
     #[ORM\ManyToOne(targetEntity: Artist::class, inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
@@ -109,14 +109,14 @@ class Event
         return $this;
     }
 
-    public function getLocalisation(): ?string
+    public function getLocation(): ?string
     {
-        return $this->localisation;
+        return $this->location;
     }
 
-    public function setLocalisation(string $localisation): static
+    public function setLocation(string $location): static
     {
-        $this->localisation = $localisation;
+        $this->location = $location;
 
         return $this;
     }
