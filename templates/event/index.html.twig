@@ -38,8 +38,8 @@
                         <h5 class="mb-1">{{ event.name }}</h5>
                         <small>{{ event.date|date('d/m/Y H:i') }}</small>
                     </div>
-                    <p class="mb-1">{{ event.location }}</p>
-                    <small>Artiste: <strong>{{ event.artist.name }}</strong></small>
+                    <p class="mb-1"> Lieu : <strong>{{ event.location }}</strong></p>
+                    <small>Artiste : <strong>{{ event.artist.name }}</strong></small>
                 </a>
             {% else %}
                 <p>Aucun événement trouvé.</p>
