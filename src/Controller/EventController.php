@@ -52,7 +52,7 @@ class EventController extends AbstractController
 
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             // Ajouter le créateur comme participant
             $event->addParticipant($user);

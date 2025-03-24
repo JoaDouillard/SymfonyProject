@@ -39,8 +39,9 @@ class Artist
     private ?string $description = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
-    #[Groups(['artist:read'])]
     private ?string $imageFilename = null;
+    #[Groups(['artist:read', 'event:read'])]
+    private ?string $imageUrl = null;
 
     /**
      * @var Collection<int, Event>
@@ -48,6 +49,8 @@ class Artist
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'artist')]
     #[Groups(['artist:item:read'])]
     private Collection $events;
+
+
 
     public function __construct()
     {
@@ -86,6 +89,20 @@ class Artist
     public function getImageFilename(): ?string
     {
         return $this->imageFilename;
+    }
+
+
+    public function getImageUrl(): ?string
+    {
+        if (!$this->imageFilename) {
+            return null;
+        }
+
+        return sprintf(
+            '%s/uploads/images/%s',
+            $_ENV['APP_URL'] ?? 'http://localhost:8000',
+            $this->imageFilename
+        );
     }
 
     public function setImageFilename(?string $imageFilename): static

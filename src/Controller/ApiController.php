@@ -53,23 +53,32 @@ final class ApiController extends AbstractController
     // ENDPOINTS POUR LES ARTISTES
 
     #[Route('/artists', name: 'artists_list', methods: ['GET'])]
-    public function listArtists(): JsonResponse
+//    public function listArtists(): JsonResponse
+//    {
+//        $artists = $this->artistRepository->findAll();
+//        return $this->json($artists, Response::HTTP_OK, [], ['groups' => 'artist:read']);
+//    }
+
+    public function listArtists(ArtistRepository $artistRepository): Response
     {
-        $artists = $this->artistRepository->findAll();
-        return $this->json($artists, Response::HTTP_OK, [], ['groups' => 'artist:read']);
+        $artists = $artistRepository->findAll();
+
+        return $this->json($artists, 200, [], ['groups' => 'artist:read']);
     }
 
     #[Route('/artists/{id}', name: 'artist_detail', methods: ['GET'])]
-    public function detailArtist(int $id): JsonResponse
+//    public function detailArtist(int $id): JsonResponse
+//    {
+//        $artist = $this->artistRepository->find($id);
+//
+//        if (!$artist) {
+//            return $this->json(['message' => 'Artiste non trouvé'], Response::HTTP_NOT_FOUND);
+//        }
+//
+//        return $this->json($artist, Response::HTTP_OK, [], ['groups' => 'artist:read']);
+//    }
+    public function detailArtist(Artist $artist): Response
     {
-        $artist = $this->artistRepository->find($id);
-
-        if (!$artist) {
-            return $this->json(['message' => 'Artiste non trouvé'], Response::HTTP_NOT_FOUND);
-        }
-
-        return $this->json($artist, Response::HTTP_OK, [], ['groups' => 'artist:read']);
+        return $this->json($artist, 200, [], ['groups' => 'artist:read']);
     }
-
-
 }
