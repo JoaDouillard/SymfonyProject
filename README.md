@@ -1,5 +1,5 @@
 
-# Symfony API Project
+# Symfony Project
 
 Ce projet est une API développée avec Symfony, fournissant une interface backend robuste pour les applications web et mobiles.
 
