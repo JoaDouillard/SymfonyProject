@@ -47,18 +47,12 @@ final class ApiController extends AbstractController
             return $this->json(['message' => 'Événement non trouvé'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($event, Response::HTTP_OK, [], ['groups' => 'event:read']);
+        return $this->json($event, Response::HTTP_OK, [], ['groups' => ['event:read', 'event:item:read']]);
     }
 
     // ENDPOINTS POUR LES ARTISTES
 
     #[Route('/artists', name: 'artists_list', methods: ['GET'])]
-//    public function listArtists(): JsonResponse
-//    {
-//        $artists = $this->artistRepository->findAll();
-//        return $this->json($artists, Response::HTTP_OK, [], ['groups' => 'artist:read']);
-//    }
-
     public function listArtists(ArtistRepository $artistRepository): Response
     {
         $artists = $artistRepository->findAll();
@@ -67,18 +61,24 @@ final class ApiController extends AbstractController
     }
 
     #[Route('/artists/{id}', name: 'artist_detail', methods: ['GET'])]
-//    public function detailArtist(int $id): JsonResponse
-//    {
-//        $artist = $this->artistRepository->find($id);
-//
-//        if (!$artist) {
-//            return $this->json(['message' => 'Artiste non trouvé'], Response::HTTP_NOT_FOUND);
-//        }
-//
-//        return $this->json($artist, Response::HTTP_OK, [], ['groups' => 'artist:read']);
-//    }
     public function detailArtist(Artist $artist): Response
     {
-        return $this->json($artist, 200, [], ['groups' => 'artist:read']);
+        // Ici, nous ajoutons le groupe artist:item:read pour inclure les événements associés
+        return $this->json($artist, 200, [], ['groups' => ['artist:read', 'artist:item:read']]);
+    }
+
+    // Nouvelle méthode pour obtenir les événements d'un artiste spécifique
+    #[Route('/artists/{id}/events', name: 'artist_events', methods: ['GET'])]
+    public function getArtistEvents(int $id): JsonResponse
+    {
+        $artist = $this->artistRepository->find($id);
+
+        if (!$artist) {
+            return $this->json(['message' => 'Artiste non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
+        $events = $artist->getEvents();
+
+        return $this->json($events, Response::HTTP_OK, [], ['groups' => ['event:read']]);
     }
 }

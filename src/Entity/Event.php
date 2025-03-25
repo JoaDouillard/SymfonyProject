@@ -35,7 +35,7 @@ class Event
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['event:read', 'event:item:read'])]
+    #[Groups(['event:read', 'event:item:read', 'artist:item:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -43,7 +43,7 @@ class Event
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['event:read', 'event:item:read'])]
+    #[Groups(['event:read', 'event:item:read', 'artist:item:read'])]
     private ?string $location = null;
 
     #[ORM\ManyToOne(targetEntity: Artist::class, inversedBy: 'events')]
@@ -62,6 +62,9 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'participatedEvents')]
     #[Groups(['event:item:read'])]
     private Collection $participants;
+
+    // Suppression de la relation ManyToMany inutilisée vers Artist
+    // Elle est redondante avec la relation ManyToOne déjà définie
 
     public function __construct()
     {
@@ -168,5 +171,4 @@ class Event
 
         return $this;
     }
-
 }

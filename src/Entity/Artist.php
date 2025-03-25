@@ -40,6 +40,7 @@ class Artist
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $imageFilename = null;
+
     #[Groups(['artist:read', 'event:read'])]
     private ?string $imageUrl = null;
 
@@ -47,10 +48,8 @@ class Artist
      * @var Collection<int, Event>
      */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'artist')]
-    #[Groups(['artist:item:read'])]
+    #[Groups(['artist:item:read'])]  // Correction: utilisez artist:item:read au lieu de artist:detail
     private Collection $events;
-
-
 
     public function __construct()
     {
@@ -91,7 +90,6 @@ class Artist
         return $this->imageFilename;
     }
 
-
     public function getImageUrl(): ?string
     {
         if (!$this->imageFilename) {
@@ -115,6 +113,7 @@ class Artist
     /**
      * @return Collection<int, Event>
      */
+    #[Groups(['artist:item:read'])]  // Correction: utilisez artist:item:read au lieu de artist:detail
     public function getEvents(): Collection
     {
         return $this->events;
