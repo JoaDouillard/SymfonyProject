@@ -60,33 +60,38 @@ Vous pouvez maintenant accéder à l'application à l'adresse : `http://localhos
 ## Structure du projet
 
 ```
-└── SymfonyProject/
-    ├── bin/                   # Exécutables Symfony
-    ├── config/                # Configuration de l'application
-    ├── migrations/            # Migrations de base de données
-    ├── public/                # Point d'entrée web, assets publics
-    │   └── uploads/           # Dossier des fichiers uploadés
-    │       └── images/        # Images uploadées
-    ├── src/                   # Code source de l'application
-    │   ├── Command/           # Commandes personnalisées Symfony
-    │   ├── Controller/        # Contrôleurs API
-    │   ├── Entity/            # Entités Doctrine
-    │   ├── Form/              # Formulaires Symfony
-    │   ├── Repository/        # Accès aux données
-    │   ├── Security/          # Gestion de la sécurité
-    │   └── Kernel.php         # Fichier Kernel Symfony
-    ├── templates/             # Templates Twig
-    │   ├── admin/             # Interface administrateur
-    │   ├── api/               # Templates pour l'API
-    │   ├── artist/            # Vue artiste
-    │   ├── event/             # Vue événement
-    │   ├── home/              # Page d'accueil
-    │   ├── registration/      # Inscription
-    │   └── security/          # Sécurité et login
-    ├── tests/                 # Tests automatisés
-    ├── translations/          # Fichiers de traduction
-    ├── var/                   # Fichiers générés (cache, logs)
-    └── vendor/                # Dépendances Composer
+📦 SymfonyProject/
+┣ 📂 assets/                  # Ressources frontend (JS, CSS, images)
+┣ 📂 bin/                     # Scripts exécutables 
+┣ 📂 config/                  # Fichiers de configuration Symfony
+┣ 📂 migrations/              # Migrations de base de données
+┣ 📂 public/                  # Fichiers publics accessibles via le web
+┣ 📂 src/                     # Sources PHP principales
+┃ ┣ 📂 Command/               # Commandes console personnalisées
+┃ ┣ 📂 Controller/            # Contrôleurs de l'application
+┃ ┣ 📂 Entity/                # Entités (modèles de données)
+┃ ┣ 📂 Form/                  # Types de formulaires
+┃ ┣ 📂 OpenApi/               # Configuration de l'API
+┃ ┣ 📂 Repository/            # Repositories pour accès aux données
+┃ ┣ 📂 Security/              # Classes liées à la sécurité
+┃ ┣ 📂 Service/               # Services métier
+┃ ┗ 📜 Kernel.php             # Noyau de l'application Symfony
+┣ 📂 templates/               # Templates Twig
+┃ ┣ 📂 admin/                 # Templates d'administration
+┃ ┣ 📂 artist/                # Templates liés aux artistes
+┃ ┣ 📂 event/                 # Templates liés aux événements
+┃ ┣ 📂 home/                  # Templates de la page d'accueil
+┃ ┣ 📂 profile/               # Templates du profil utilisateur
+┃ ┣ 📂 registration/          # Templates d'inscription
+┃ ┣ 📂 security/              # Templates d'authentification
+┃ ┗ 📜 base.html.twig         # Template de base
+┣ 📂 translations/            # Fichiers de traduction
+┣ 📂 var/                     # Fichiers temporaires (cache, logs)
+┣ 📂 vendor/                  # Dépendances PHP (via Composer)
+┣ 📜 .env                     # Variables d'environnement par défaut
+┣ 📜 .env.dev                 # Variables d'environnement de développement
+┣ 📜 .env.local               # Variables d'environnement locales (non versionnées)
+┗ 📜 .env.test                # Variables d'environnement de test
 ```
 
 ## Résolution des problèmes courants
